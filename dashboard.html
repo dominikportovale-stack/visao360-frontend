@@ -285,6 +285,187 @@ body{
 .sidebar.collapsed .sidebar-nav-item .nav-label,
 .sidebar.collapsed .sidebar-nav-item .nav-badge{display:none;}
 
+.sidebar-bottom{
+  margin-top:auto;
+  padding:12px;
+  border-top:1px solid rgba(255,255,255,.1);
+  position:relative;
+}
+.sidebar-user-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:9px 8px;
+  border-radius:10px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:#fff;
+  transition:background .15s ease;
+  text-align:left;
+}
+.sidebar-user-btn:hover{background:rgba(255,255,255,.08);}
+.sidebar-user-btn .user-avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--azul-500);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:#fff;
+  flex-shrink:0;
+}
+.sidebar-user-btn .user-info{overflow:hidden;line-height:1.25;flex:1;min-width:0;}
+.sidebar-user-btn .user-name{font-size:12.5px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sidebar-user-btn .user-role{font-size:10.5px;color:var(--azul-300);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sidebar.collapsed .sidebar-user-btn .user-info{display:none;}
+.sidebar.collapsed .sidebar-user-btn{justify-content:center;}
+
+.user-popover{
+  display:none;
+  position:absolute;
+  bottom:100%;
+  left:12px;
+  right:12px;
+  margin-bottom:8px;
+  background:var(--branco);
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  overflow:hidden;
+  z-index:80;
+}
+.user-popover.show{display:block;}
+.sidebar.collapsed .user-popover{left:64px;right:auto;width:200px;}
+.user-popover-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:11px 14px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  color:var(--cinza-800);
+  text-align:left;
+  font-family:var(--fonte);
+  transition:background .15s ease;
+}
+.user-popover-item:hover{background:var(--cinza-50);}
+.user-popover-item svg{width:16px;height:16px;flex-shrink:0;color:var(--cinza-600);}
+.user-popover-item.item-sair{color:var(--vermelho-600);border-top:1px solid var(--cinza-100);}
+.user-popover-item.item-sair svg{color:var(--vermelho-600);}
+
+/* ============================== MODAL DE CONFIGURAÇÕES ============================== */
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(10,20,40,.5);
+  z-index:200;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  background:var(--branco);
+  border-radius:16px;
+  width:100%;
+  max-width:420px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  overflow:hidden;
+}
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 22px;
+  border-bottom:1px solid var(--cinza-100);
+}
+.modal-header h3{margin:0;font-size:15.5px;font-weight:800;color:var(--cinza-800);}
+.modal-close{
+  background:var(--cinza-100);
+  border:none;
+  width:28px;height:28px;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--cinza-600);
+}
+.modal-close:hover{background:var(--cinza-200);}
+.modal-close svg{width:14px;height:14px;}
+.modal-body{padding:22px;}
+.settings-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:6px 0;
+}
+.settings-row .settings-label{font-size:13.5px;font-weight:700;color:var(--cinza-800);}
+.settings-row .settings-sub{font-size:12px;color:var(--cinza-600);margin-top:2px;}
+.theme-toggle{
+  display:flex;
+  background:var(--cinza-100);
+  border-radius:10px;
+  padding:3px;
+  gap:2px;
+}
+.theme-toggle button{
+  border:none;
+  background:none;
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--cinza-600);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--fonte);
+}
+.theme-toggle button svg{width:14px;height:14px;}
+.theme-toggle button.active{background:var(--branco);color:var(--azul-700);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+
+/* ============================== TEMA ESCURO ============================== */
+body[data-theme="dark"]{
+  background:#0f1521;
+  color:#e4e8f1;
+}
+body[data-theme="dark"] .main-content{background:#0f1521;}
+body[data-theme="dark"] .filters-bar{background:#161d2e;border-bottom-color:#232c42;}
+body[data-theme="dark"] .filter-group select{background-color:#1d2740;border-color:#2a3550;color:#e4e8f1;}
+body[data-theme="dark"] .btn-clear-filters{background:#1d2740;border-color:#2a3550;color:#c3cbe0;}
+body[data-theme="dark"] .kpi-section-title{color:#8b96b5;}
+body[data-theme="dark"] .card,
+body[data-theme="dark"] .modal-box,
+body[data-theme="dark"] .login-card{background:#161d2e;border-color:#232c42;}
+body[data-theme="dark"] .card-header{border-bottom-color:#232c42;}
+body[data-theme="dark"] .card-header h2,
+body[data-theme="dark"] .modal-header h3,
+body[data-theme="dark"] .settings-row .settings-label{color:#e4e8f1;}
+body[data-theme="dark"] .search-box{background:#1d2740;border-color:#2a3550;}
+body[data-theme="dark"] .search-box input{color:#e4e8f1;}
+body[data-theme="dark"] .status-tabs,
+body[data-theme="dark"] .status-tabs-wrap{border-color:#232c42;}
+body[data-theme="dark"] .status-tabs-wrap::after{background:linear-gradient(to right, transparent, #161d2e 80%);}
+body[data-theme="dark"] .status-tab{color:#8b96b5;}
+body[data-theme="dark"] .tab-client-row{border-bottom-color:#232c42;}
+body[data-theme="dark"] .tab-client-row:hover{background:#1d2740;}
+body[data-theme="dark"] .tab-client-row .tcr-name{color:#e4e8f1;}
+body[data-theme="dark"] .tab-client-row .tcr-meta{color:#8b96b5;}
+body[data-theme="dark"] .detail-field,
+body[data-theme="dark"] .detail-group-title{border-color:#232c42;}
+body[data-theme="dark"] .detail-field .field-value{color:#e4e8f1;}
+body[data-theme="dark"] .footer-note{color:#5a6584;}
+body[data-theme="dark"] .modal-close{background:#1d2740;color:#c3cbe0;}
+body[data-theme="dark"] .theme-toggle{background:#1d2740;}
+body[data-theme="dark"] .theme-toggle button{color:#8b96b5;}
+body[data-theme="dark"] .theme-toggle button.active{background:#0f1521;color:#7badf0;}
+body[data-theme="dark"] .empty-state{color:#5a6584;}
+body[data-theme="dark"] .count-pill{background:#1d2740;color:#7badf0;}
+
 .app-main{
   flex:1;
   min-width:0;
@@ -922,6 +1103,30 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
         <span class="nav-badge" id="sidebarBadgeOportunidades">0</span>
       </button>
     </nav>
+
+    <div class="sidebar-bottom">
+      <div class="user-popover" id="userPopover">
+        <button class="user-popover-item" id="btnAlterarUsuario" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>
+          Alterar usuário
+        </button>
+        <button class="user-popover-item" id="btnAbrirConfiguracoes" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009.6 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+          Configurações
+        </button>
+        <button class="user-popover-item item-sair" id="btnSair" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Sair
+        </button>
+      </div>
+      <button class="sidebar-user-btn" id="sidebarUserBtn" type="button">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="userNameLabel">—</div>
+          <div class="user-role" id="userRoleLabel">—</div>
+        </div>
+      </button>
+    </div>
   </aside>
 
   <div class="app-main">
@@ -938,16 +1143,6 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
     </div>
   </div>
   <div class="topbar-right">
-    <div class="user-chip" id="userChip">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <div class="user-info">
-        <div class="user-name" id="userNameLabel">—</div>
-        <div class="user-role" id="userRoleLabel">—</div>
-      </div>
-    </div>
-    <button class="btn-logout" id="btnLogout" type="button" title="Sair">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-    </button>
     <div class="last-update">
       Última atualização<br>
       <strong id="lastUpdateTime">—</strong>
@@ -1126,6 +1321,36 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
 </div><!-- fim .app-shell -->
 </div><!-- fim .app-wrap -->
 
+<!-- ============================== MODAL: CONFIGURAÇÕES ============================== -->
+<div class="modal-overlay" id="modalConfiguracoes">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Configurações</h3>
+      <button class="modal-close" id="btnFecharConfiguracoes" type="button" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Aparência</div>
+          <div class="settings-sub">Escolha o tema do painel</div>
+        </div>
+        <div class="theme-toggle" id="themeToggle">
+          <button type="button" data-theme-choice="light" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            Claro
+          </button>
+          <button type="button" data-theme-choice="dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+            Escuro
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
 /* =====================================================================================
@@ -1239,8 +1464,6 @@ function setupLoginForm(){
       setLoginLoading(false);
     }
   });
-
-  document.getElementById("btnLogout").addEventListener("click", encerrarSessao);
 
   document.getElementById("btnToggleSenha").addEventListener("click", () => {
     const input = document.getElementById("loginSenha");
@@ -1957,11 +2180,64 @@ let ACTIVE_PAGE = "geral"; // "geral" | "oportunidades"
 function setupSidebar(){
   document.getElementById("btnToggleSidebar").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("collapsed");
+    document.getElementById("userPopover").classList.remove("show");
   });
 
   document.querySelectorAll(".sidebar-nav-item").forEach(btn => {
     btn.addEventListener("click", () => switchPage(btn.getAttribute("data-page")));
   });
+
+  // Popover do usuário (abre/fecha ao clicar no nome, fecha ao clicar fora)
+  const userBtn = document.getElementById("sidebarUserBtn");
+  const popover = document.getElementById("userPopover");
+  userBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    popover.classList.toggle("show");
+  });
+  document.addEventListener("click", (e) => {
+    if (!popover.contains(e.target) && !userBtn.contains(e.target)){
+      popover.classList.remove("show");
+    }
+  });
+
+  // "Alterar usuário" e "Sair" fazem a mesma coisa por ora: encerram a sessão e
+  // devolvem para a tela de login, para que outra pessoa (ou a mesma) faça login.
+  document.getElementById("btnAlterarUsuario").addEventListener("click", () => {
+    popover.classList.remove("show");
+    encerrarSessao();
+  });
+  document.getElementById("btnSair").addEventListener("click", () => {
+    popover.classList.remove("show");
+    encerrarSessao();
+  });
+
+  // Modal de Configurações
+  document.getElementById("btnAbrirConfiguracoes").addEventListener("click", () => {
+    popover.classList.remove("show");
+    document.getElementById("modalConfiguracoes").classList.add("show");
+  });
+  document.getElementById("btnFecharConfiguracoes").addEventListener("click", () => {
+    document.getElementById("modalConfiguracoes").classList.remove("show");
+  });
+  document.getElementById("modalConfiguracoes").addEventListener("click", (e) => {
+    if (e.target.id === "modalConfiguracoes") e.target.classList.remove("show");
+  });
+
+  // Tema claro/escuro
+  document.querySelectorAll("#themeToggle button").forEach(btn => {
+    btn.addEventListener("click", () => aplicarTema(btn.getAttribute("data-theme-choice")));
+  });
+  // Restaura o tema salvo (se houver) ao carregar a página
+  const temaSalvo = localStorage.getItem("visao360_tema");
+  if (temaSalvo === "dark") aplicarTema("dark");
+}
+
+function aplicarTema(tema){
+  document.body.setAttribute("data-theme", tema === "dark" ? "dark" : "light");
+  document.querySelectorAll("#themeToggle button").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-theme-choice") === tema);
+  });
+  try { localStorage.setItem("visao360_tema", tema); } catch(e) { /* ambiente sem localStorage disponível */ }
 }
 
 function switchPage(pageName){
