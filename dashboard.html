@@ -522,6 +522,11 @@ body{
   min-width:20px;text-align:center;
 }
 .status-tab.active .tab-count{background:var(--azul-100);color:var(--azul-700);}
+.status-tab-oportunidades{color:var(--verde-600);}
+.status-tab-oportunidades:hover{color:var(--verde-600);}
+.status-tab-oportunidades .tab-count{background:var(--verde-100);color:var(--verde-600);}
+.status-tab-oportunidades.active{color:var(--verde-600);border-bottom-color:var(--verde-600);}
+.status-tab-oportunidades.active .tab-count{background:var(--verde-100);color:var(--verde-600);}
 
 @media (max-width: 600px){
   .status-tab{
@@ -600,6 +605,8 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
 .status-naoutilizou .dot{background:#d9a514;}
 .status-outro{background:var(--cinza-100);color:var(--cinza-600);}
 .status-outro .dot{background:var(--cinza-400);}
+.status-oportunidade{background:var(--verde-100);color:var(--verde-600);font-weight:800;}
+.status-oportunidade .dot{background:var(--verde-600);}
 
 .empty-state{
   padding:60px 30px;text-align:center;color:var(--cinza-400);
@@ -932,6 +939,7 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
           <button class="status-tab" data-tab="acompanhamento">Em Acompanhamento <span class="tab-count" id="tabCountAcompanhamento">0</span></button>
           <button class="status-tab" data-tab="finalizado">Finalizados <span class="tab-count" id="tabCountFinalizado">0</span></button>
           <button class="status-tab" data-tab="vendida">Cotas Vendidas <span class="tab-count" id="tabCountVendida">0</span></button>
+          <button class="status-tab status-tab-oportunidades" data-tab="oportunidades">⭐ Oportunidades <span class="tab-count" id="tabCountOportunidades">0</span></button>
         </div>
       </div>
 
@@ -1249,6 +1257,45 @@ function statusBadgeHTML(row){
 }
 
 /* -------------------------------------------------------------------------
+   5b) OPORTUNIDADES COMERCIAIS
+   Regra de negócio: identifica o próximo passo comercial de cada cliente,
+   com base no status dele. Diferente do "status" (que descreve o presente),
+   a oportunidade descreve a AÇÃO recomendada — pensada para o time comercial
+   não precisar procurar cliente por cliente, apenas abrir essa aba.
+
+   Para adicionar novas regras no futuro, basta acrescentar mais blocos
+   "if (key === ...)" aqui — o resto do painel (aba, contadores, card de
+   detalhe) já funciona automaticamente com qualquer regra nova.
+   ------------------------------------------------------------------------- */
+function getOportunidade(row){
+  const key = statusKey(row);
+
+  if (key === "vendida"){
+    return {
+      titulo: "Oportunidade Comercial",
+      resumo: "Cliente vendeu a carta — ofertar novo consórcio",
+      descricao: `Cliente vendeu sua carta${row.empresa ? " para " + escapeHtml(row.empresa) : ""}. Recomenda-se realizar um novo contato para ofertar um novo consórcio.`,
+    };
+  }
+
+  if (key === "finalizado"){
+    return {
+      titulo: "Oportunidade Comercial",
+      resumo: "Cliente concluiu a utilização — nova carta de crédito",
+      descricao: "Cliente concluiu a utilização da carta contemplada. Momento ideal para iniciar uma nova jornada de planejamento e oferecer uma nova carta de crédito.",
+    };
+  }
+
+  return null; // sem oportunidade identificada para esse status, por ora
+}
+
+function oportunidadeBadgeHTML(row){
+  const op = getOportunidade(row);
+  if (!op) return "";
+  return `<span class="status-badge status-oportunidade"><span class="dot"></span>🟢 ${escapeHtml(op.resumo)}</span>`;
+}
+
+/* -------------------------------------------------------------------------
    6) CARREGAMENTO DE DADOS — agora via API (Railway), com token de sessão
    ------------------------------------------------------------------------- */
 async function loadData(){
@@ -1439,12 +1486,14 @@ function renderTabCounts(rows){
     acompanhamento: rows.filter(r => statusKey(r) === "acompanhamento").length,
     finalizado: rows.filter(r => statusKey(r) === "finalizado").length,
     vendida: rows.filter(r => statusKey(r) === "vendida").length,
+    oportunidades: rows.filter(r => getOportunidade(r) !== null).length,
   };
   document.getElementById("tabCountGeral").textContent = counts.geral.toLocaleString("pt-BR");
   document.getElementById("tabCountNaoutilizou").textContent = counts.naoutilizou.toLocaleString("pt-BR");
   document.getElementById("tabCountAcompanhamento").textContent = counts.acompanhamento.toLocaleString("pt-BR");
   document.getElementById("tabCountFinalizado").textContent = counts.finalizado.toLocaleString("pt-BR");
   document.getElementById("tabCountVendida").textContent = counts.vendida.toLocaleString("pt-BR");
+  document.getElementById("tabCountOportunidades").textContent = counts.oportunidades.toLocaleString("pt-BR");
   checkTabsOverflow();
 }
 
@@ -1452,9 +1501,14 @@ function renderTabClientList(){
   const wrap = document.getElementById("tabClientList");
   const emptyState = document.getElementById("emptyState");
 
-  const rowsForTab = ACTIVE_TAB === "geral"
-    ? FILTERED_ROWS
-    : FILTERED_ROWS.filter(r => statusKey(r) === ACTIVE_TAB);
+  let rowsForTab;
+  if (ACTIVE_TAB === "geral"){
+    rowsForTab = FILTERED_ROWS;
+  } else if (ACTIVE_TAB === "oportunidades"){
+    rowsForTab = FILTERED_ROWS.filter(r => getOportunidade(r) !== null);
+  } else {
+    rowsForTab = FILTERED_ROWS.filter(r => statusKey(r) === ACTIVE_TAB);
+  }
 
   const sorted = [...rowsForTab].sort((a,b) => {
     const ta = a.dtContemplacao ? a.dtContemplacao.getTime() : 0;
@@ -1466,10 +1520,17 @@ function renderTabClientList(){
     wrap.style.display = "none";
     wrap.innerHTML = "";
     emptyState.style.display = "flex";
+    if (ACTIVE_TAB === "oportunidades"){
+      emptyState.querySelector("p").textContent = "Nenhuma oportunidade comercial identificada no momento.";
+    } else {
+      emptyState.querySelector("p").textContent = "Nenhum cliente encontrado nesta aba.";
+    }
     return;
   }
   emptyState.style.display = "none";
   wrap.style.display = "block";
+
+  const mostrarOportunidade = ACTIVE_TAB === "oportunidades";
 
   wrap.innerHTML = sorted.map(r => `
     <div class="tab-client-row" data-contrato="${escapeHtml(r.contrato)}">
@@ -1479,7 +1540,7 @@ function renderTabClientList(){
       </div>
       <div class="tcr-right">
         <span class="tcr-credito">${formatMoneyBRL(r.credito)}</span>
-        ${statusBadgeHTML(r)}
+        ${mostrarOportunidade ? oportunidadeBadgeHTML(r) : statusBadgeHTML(r)}
       </div>
     </div>
   `).join("");
@@ -1588,6 +1649,7 @@ function showDetailCard(row){
   SELECTED_CONTRATO = row.contrato;
   const key = statusKey(row);
   const style = statusBoxStyle(key);
+  const oportunidade = getOportunidade(row);
 
   let statusExtraHTML = "";
   if (key === "vendida"){
@@ -1631,6 +1693,13 @@ function showDetailCard(row){
         <div class="detail-row"><span class="k" style="font-size:15px;font-weight:800;">${statusLabelMap[key]}</span></div>
         ${statusExtraHTML}
       </div>
+
+      ${oportunidade ? `
+      <div class="detail-status-box" style="background:var(--verde-100); color:var(--verde-600); margin-top:-10px;">
+        <div class="status-title">🟢 ${escapeHtml(oportunidade.titulo)}</div>
+        <div class="detail-row"><span class="k" style="font-size:14px;font-weight:800;color:var(--verde-600);">${escapeHtml(oportunidade.resumo)}</span></div>
+        <div style="font-size:13px;line-height:1.5;color:var(--verde-600);opacity:.9;">${oportunidade.descricao}</div>
+      </div>` : ""}
 
       <div class="detail-credit-highlight">
         <span class="dc-label">Crédito</span>
