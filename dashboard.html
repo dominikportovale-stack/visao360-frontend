@@ -1408,6 +1408,10 @@ async function fazerLogin(login, senha){
   });
   if (!resp.ok){
     if (resp.status === 401) throw new Error("Login ou senha incorretos.");
+    if (resp.status === 429){
+      const dados = await resp.json().catch(() => null);
+      throw new Error(dados?.detail || "Muitas tentativas erradas. Tente novamente mais tarde.");
+    }
     throw new Error("Não foi possível conectar ao servidor. Tente novamente em alguns instantes.");
   }
   return resp.json(); // { token, nome, papel, must_change_password }
@@ -1417,6 +1421,20 @@ function iniciarsessao(dadosLogin){
   SESSAO.token = dadosLogin.token;
   SESSAO.nome = dadosLogin.nome;
   SESSAO.papel = dadosLogin.papel;
+
+  // Guarda a sessão no sessionStorage — sobrevive a um F5 ou fechar/abrir a mesma
+  // aba, mas é apagada automaticamente quando a aba/navegador é encerrado, ou
+  // quando o "Sair" é clicado. Guardamos também um horário de expiração (12h,
+  // igual ao token do backend) para nunca reaproveitar uma sessão vencida.
+  try {
+    const expiraEm = Date.now() + 12 * 60 * 60 * 1000;
+    sessionStorage.setItem("visao360_sessao", JSON.stringify({
+      token: dadosLogin.token,
+      nome: dadosLogin.nome,
+      papel: dadosLogin.papel,
+      expiraEm,
+    }));
+  } catch(e) { /* navegador sem sessionStorage disponível — segue sem persistência */ }
 
   // Preenche o "chip" do usuário no topo do painel
   const iniciais = (dadosLogin.nome || "?").trim().split(/\s+/).slice(0,2).map(p => p[0]).join("").toUpperCase();
@@ -1428,6 +1446,25 @@ function iniciarsessao(dadosLogin){
   document.getElementById("appWrap").classList.add("show");
 }
 
+/* Tenta restaurar uma sessão salva (chamado ao carregar a página). Retorna true
+   se conseguiu restaurar e já mostrou o painel; false se precisa mostrar o login. */
+function tentarRestaurarSessao(){
+  let salvo;
+  try {
+    salvo = JSON.parse(sessionStorage.getItem("visao360_sessao") || "null");
+  } catch(e) {
+    return false;
+  }
+  if (!salvo || !salvo.token || !salvo.expiraEm) return false;
+  if (Date.now() > salvo.expiraEm){
+    sessionStorage.removeItem("visao360_sessao"); // sessão vencida — não reaproveita
+    return false;
+  }
+  iniciarsessao(salvo);
+  loadData();
+  return true;
+}
+
 function mapaLabelPapel(papel){
   const map = { admin:"Administrador", coordenador:"Coordenador(a)", diretor:"Diretor(a)", gerente:"Gerente", vendedor:"Vendedor(a)" };
   return map[papel] || papel;
@@ -1437,6 +1474,7 @@ function encerrarSessao(){
   SESSAO = { token:null, nome:null, papel:null };
   RAW_ROWS = [];
   FILTERED_ROWS = [];
+  try { sessionStorage.removeItem("visao360_sessao"); } catch(e) {}
   document.getElementById("appWrap").classList.remove("show");
   document.getElementById("loginScreen").style.display = "flex";
   document.getElementById("loginSenha").value = "";
@@ -2386,7 +2424,8 @@ window.addEventListener("DOMContentLoaded", () => {
   setupLoginForm();
   setupEvents();
   setupSidebar();
-  // loadData() só é chamado depois do login (dentro de setupLoginForm -> submit)
+  tentarRestaurarSessao(); // se já havia sessão válida neste navegador, pula a tela de login
+  // Se não havia sessão salva, loadData() só é chamado depois do login (dentro de setupLoginForm -> submit)
 });
 </script>
 </body>
