@@ -193,6 +193,107 @@ body{
 /* App principal — fica escondido até o login ser confirmado */
 .app-wrap{display:none;}
 .app-wrap.show{display:block;}
+.app-shell{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ============================== SIDEBAR ============================== */
+.sidebar{
+  width:220px;
+  flex-shrink:0;
+  background:linear-gradient(180deg,var(--azul-900) 0%,var(--azul-800) 100%);
+  display:flex;
+  flex-direction:column;
+  transition:width .18s ease;
+  position:sticky;
+  top:0;
+  height:100vh;
+  z-index:60;
+}
+.sidebar.collapsed{width:72px;}
+.sidebar-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 16px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  min-height:60px;
+}
+.sidebar-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.sidebar-brand img{height:26px;flex-shrink:0;}
+.sidebar-brand span{color:#fff;font-weight:800;font-size:13px;letter-spacing:-0.01em;}
+.sidebar.collapsed .sidebar-brand span{display:none;}
+.btn-toggle-sidebar{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;
+  width:26px;height:26px;
+  border-radius:7px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:background .15s ease, transform .18s ease;
+}
+.btn-toggle-sidebar:hover{background:rgba(255,255,255,.16);}
+.btn-toggle-sidebar svg{width:14px;height:14px;transition:transform .18s ease;}
+.sidebar.collapsed .btn-toggle-sidebar svg{transform:rotate(180deg);}
+.sidebar-nav{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:14px 12px;
+}
+.sidebar-nav-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 12px;
+  border-radius:10px;
+  color:rgba(255,255,255,.75);
+  cursor:pointer;
+  font-size:13.5px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  transition:background .15s ease, color .15s ease;
+  border:none;
+  background:none;
+  font-family:var(--fonte);
+  text-align:left;
+  width:100%;
+}
+.sidebar-nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.sidebar-nav-item.active{background:rgba(255,255,255,.14);color:#fff;}
+.sidebar-nav-item svg{width:19px;height:19px;flex-shrink:0;}
+.sidebar-nav-item .nav-label{overflow:hidden;}
+.sidebar-nav-item .nav-badge{
+  margin-left:auto;
+  background:var(--verde-500,var(--verde-600));
+  color:#fff;
+  font-size:11px;font-weight:800;
+  padding:1px 7px;border-radius:10px;
+  flex-shrink:0;
+}
+.sidebar.collapsed .sidebar-nav-item{justify-content:center;padding:11px 0;}
+.sidebar.collapsed .sidebar-nav-item .nav-label,
+.sidebar.collapsed .sidebar-nav-item .nav-badge{display:none;}
+
+.app-main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.app-view{display:none;}
+.app-view.show{display:block;}
 
 /* ============================== TOPBAR ============================== */
 .topbar{
@@ -797,6 +898,33 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
 
 <!-- ============================== APP PRINCIPAL (escondido até logar) ============================== -->
 <div class="app-wrap" id="appWrap">
+<div class="app-shell">
+
+  <!-- ============================== SIDEBAR ============================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <img id="sidebarLogoImg" src="" alt="Porto Vale">
+        <span>Visão 360°</span>
+      </div>
+      <button class="btn-toggle-sidebar" id="btnToggleSidebar" type="button" title="Recolher menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-nav-item active" data-page="geral" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span class="nav-label">Geral</span>
+      </button>
+      <button class="sidebar-nav-item" data-page="oportunidades" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <span class="nav-label">Oportunidades</span>
+        <span class="nav-badge" id="sidebarBadgeOportunidades">0</span>
+      </button>
+    </nav>
+  </aside>
+
+  <div class="app-main">
 
 <!-- ============================== TOPBAR ============================== -->
 <header class="topbar">
@@ -805,7 +933,7 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
       <img id="logoImg" src="" alt="Porto Vale Consórcio">
     </div>
     <div class="title-block">
-      <h1>Visão 360° — Painel Estratégico do Pós-Contemplação</h1>
+      <h1 id="pageTitle">Visão 360° — Painel Estratégico do Pós-Contemplação</h1>
       <p>Conectando Pessoas e Processos</p>
     </div>
   </div>
@@ -830,6 +958,9 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
     </button>
   </div>
 </header>
+
+<!-- ============================== VIEW: GERAL ============================== -->
+<div class="app-view show" id="viewGeral">
 
 <!-- ============================== FILTROS ============================== -->
 <div class="filters-bar">
@@ -939,7 +1070,6 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
           <button class="status-tab" data-tab="acompanhamento">Em Acompanhamento <span class="tab-count" id="tabCountAcompanhamento">0</span></button>
           <button class="status-tab" data-tab="finalizado">Finalizados <span class="tab-count" id="tabCountFinalizado">0</span></button>
           <button class="status-tab" data-tab="vendida">Cotas Vendidas <span class="tab-count" id="tabCountVendida">0</span></button>
-          <button class="status-tab status-tab-oportunidades" data-tab="oportunidades">⭐ Oportunidades <span class="tab-count" id="tabCountOportunidades">0</span></button>
         </div>
       </div>
 
@@ -959,7 +1089,43 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
   <p class="footer-note">Visão 360° · Painel Estratégico do Pós-Contemplação · Porto Vale Consórcio</p>
 </main>
 
+</div><!-- fim #viewGeral -->
+
+<!-- ============================== VIEW: OPORTUNIDADES ============================== -->
+<div class="app-view" id="viewOportunidades">
+  <main class="main-content">
+
+    <div class="panel-grid">
+      <div class="card">
+        <div class="card-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <h2>⭐ Oportunidades Comerciais</h2>
+            <span class="count-pill" id="opCountPill" style="background:var(--verde-100);color:var(--verde-600);">0 registros</span>
+          </div>
+        </div>
+        <p style="margin:0;padding:14px 22px 0;font-size:13px;color:var(--cinza-600);">
+          Clientes com uma próxima ação comercial recomendada — não é preciso procurar, já está tudo aqui.
+        </p>
+
+        <div id="opClientList" class="tab-client-list" style="margin-top:6px;"></div>
+
+        <div class="detail-card-wrap" id="detailCardWrapOp" style="display:none;"></div>
+
+        <div class="empty-state" id="opEmptyState" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <p>Nenhuma oportunidade comercial identificada no momento.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer-note">Visão 360° · Painel Estratégico do Pós-Contemplação · Porto Vale Consórcio</p>
+  </main>
+</div><!-- fim #viewOportunidades -->
+
+  </div><!-- fim .app-main -->
+</div><!-- fim .app-shell -->
 </div><!-- fim .app-wrap -->
+
 
 <script>
 /* =====================================================================================
@@ -1452,6 +1618,10 @@ function applyFiltersAndRender(){
   if (!document.getElementById("searchInput").value.trim()){
     renderTabClientList();
   }
+  updateSidebarBadge();
+  if (ACTIVE_PAGE === "oportunidades"){
+    renderOportunidadesPage();
+  }
 }
 
 /* -------------------------------------------------------------------------
@@ -1493,7 +1663,6 @@ function renderTabCounts(rows){
   document.getElementById("tabCountAcompanhamento").textContent = counts.acompanhamento.toLocaleString("pt-BR");
   document.getElementById("tabCountFinalizado").textContent = counts.finalizado.toLocaleString("pt-BR");
   document.getElementById("tabCountVendida").textContent = counts.vendida.toLocaleString("pt-BR");
-  document.getElementById("tabCountOportunidades").textContent = counts.oportunidades.toLocaleString("pt-BR");
   checkTabsOverflow();
 }
 
@@ -1645,7 +1814,9 @@ function statusBoxStyle(key){
   return styles[key] || styles.outro;
 }
 
-function showDetailCard(row){
+function showDetailCard(row, wrapId){
+  wrapId = wrapId || "detailCardWrap";
+  const ehPaginaGeral = wrapId === "detailCardWrap";
   SELECTED_CONTRATO = row.contrato;
   const key = statusKey(row);
   const style = statusBoxStyle(key);
@@ -1721,27 +1892,38 @@ function showDetailCard(row){
     </div>
   `;
 
-  const wrap = document.getElementById("detailCardWrap");
+  const wrap = document.getElementById(wrapId);
   wrap.innerHTML = html;
   wrap.style.display = "block";
-  document.getElementById("detailCardCloseBtn").addEventListener("click", hideDetailCard);
+  wrap.querySelector("#detailCardCloseBtn").addEventListener("click", () => hideDetailCard(wrapId));
 
-  document.getElementById("searchSuggestions").style.display = "none";
-  document.getElementById("statusTabsWrap").style.display = "none";
-  document.getElementById("tabClientList").style.display = "none";
+  if (ehPaginaGeral){
+    document.getElementById("searchSuggestions").style.display = "none";
+    document.getElementById("statusTabsWrap").style.display = "none";
+    document.getElementById("tabClientList").style.display = "none";
+  } else {
+    document.getElementById("opClientList").style.display = "none";
+  }
   wrap.scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
-function hideDetailCard(){
-  const wrap = document.getElementById("detailCardWrap");
+function hideDetailCard(wrapId){
+  wrapId = wrapId || "detailCardWrap";
+  const ehPaginaGeral = wrapId === "detailCardWrap";
+  const wrap = document.getElementById(wrapId);
   wrap.style.display = "none";
   wrap.innerHTML = "";
-  const query = document.getElementById("searchInput").value.trim();
-  if (query){
-    document.getElementById("searchSuggestions").style.display = "block";
+
+  if (ehPaginaGeral){
+    const query = document.getElementById("searchInput").value.trim();
+    if (query){
+      document.getElementById("searchSuggestions").style.display = "block";
+    } else {
+      document.getElementById("statusTabsWrap").style.display = "block";
+      renderTabClientList();
+    }
   } else {
-    document.getElementById("statusTabsWrap").style.display = "block";
-    renderTabClientList();
+    renderOportunidadesPage();
   }
 }
 
@@ -1751,16 +1933,111 @@ function hideDetailCard(){
 function renderLogo(){
   const container = document.getElementById("logoContainer");
   const img = document.getElementById("logoImg");
+  const sidebarImg = document.getElementById("sidebarLogoImg");
   if (LOGO_BASE64 && LOGO_BASE64.trim() !== ""){
     img.src = LOGO_BASE64;
     img.style.display = "block";
+    sidebarImg.src = LOGO_BASE64;
+    sidebarImg.style.display = "block";
   } else {
     container.innerHTML = `
       <div class="logo-placeholder">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 16H3z"></path></svg>
         PORTO VALE
       </div>`;
+    sidebarImg.style.display = "none";
   }
+}
+
+/* -------------------------------------------------------------------------
+   12b) NAVEGAÇÃO DO MENU LATERAL (SIDEBAR)
+   ------------------------------------------------------------------------- */
+let ACTIVE_PAGE = "geral"; // "geral" | "oportunidades"
+
+function setupSidebar(){
+  document.getElementById("btnToggleSidebar").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+  });
+
+  document.querySelectorAll(".sidebar-nav-item").forEach(btn => {
+    btn.addEventListener("click", () => switchPage(btn.getAttribute("data-page")));
+  });
+}
+
+function switchPage(pageName){
+  ACTIVE_PAGE = pageName;
+
+  document.querySelectorAll(".sidebar-nav-item").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-page") === pageName);
+  });
+
+  document.getElementById("viewGeral").classList.toggle("show", pageName === "geral");
+  document.getElementById("viewOportunidades").classList.toggle("show", pageName === "oportunidades");
+
+  const titulo = pageName === "oportunidades"
+    ? "⭐ Oportunidades Comerciais"
+    : "Visão 360° — Painel Estratégico do Pós-Contemplação";
+  document.getElementById("pageTitle").textContent = titulo;
+
+  if (pageName === "oportunidades"){
+    renderOportunidadesPage();
+  }
+}
+
+/* -------------------------------------------------------------------------
+   12c) PÁGINA DE OPORTUNIDADES — lista dedicada + card de detalhe próprio
+   ------------------------------------------------------------------------- */
+function renderOportunidadesPage(){
+  const rows = FILTERED_ROWS.filter(r => getOportunidade(r) !== null);
+  const wrap = document.getElementById("opClientList");
+  const emptyState = document.getElementById("opEmptyState");
+
+  document.getElementById("opCountPill").textContent =
+    rows.length.toLocaleString("pt-BR") + (rows.length === 1 ? " registro" : " registros");
+  document.getElementById("sidebarBadgeOportunidades").textContent = rows.length.toLocaleString("pt-BR");
+
+  const sorted = [...rows].sort((a,b) => {
+    const ta = a.dtContemplacao ? a.dtContemplacao.getTime() : 0;
+    const tb = b.dtContemplacao ? b.dtContemplacao.getTime() : 0;
+    return tb - ta;
+  });
+
+  if (sorted.length === 0){
+    wrap.style.display = "none";
+    wrap.innerHTML = "";
+    emptyState.style.display = "flex";
+    return;
+  }
+  emptyState.style.display = "none";
+  wrap.style.display = "block";
+
+  wrap.innerHTML = sorted.map(r => `
+    <div class="tab-client-row" data-contrato="${escapeHtml(r.contrato)}">
+      <div class="tcr-main">
+        <div class="tcr-name">${escapeHtml(r.consorciado)}</div>
+        <div class="tcr-meta">${escapeHtml(r.grupoCota)} · Contrato ${escapeHtml(r.contrato)}</div>
+      </div>
+      <div class="tcr-right">
+        <span class="tcr-credito">${formatMoneyBRL(r.credito)}</span>
+        ${oportunidadeBadgeHTML(r)}
+      </div>
+    </div>
+  `).join("");
+
+  wrap.querySelectorAll(".tab-client-row[data-contrato]").forEach(el => {
+    el.addEventListener("click", () => {
+      const contrato = el.getAttribute("data-contrato");
+      const row = RAW_ROWS.find(r => r.contrato === contrato);
+      if (row) showDetailCard(row, "detailCardWrapOp");
+    });
+  });
+}
+
+/* Atualiza a bolinha verde do menu lateral sempre que os dados forem recarregados
+   ou refiltrados — mesmo sem estar na página de Oportunidades no momento. */
+function updateSidebarBadge(){
+  const total = FILTERED_ROWS.filter(r => getOportunidade(r) !== null).length;
+  document.getElementById("sidebarBadgeOportunidades").textContent = total.toLocaleString("pt-BR");
 }
 
 /* -------------------------------------------------------------------------
@@ -1832,6 +2109,7 @@ window.addEventListener("DOMContentLoaded", () => {
   renderLogo();
   setupLoginForm();
   setupEvents();
+  setupSidebar();
   // loadData() só é chamado depois do login (dentro de setupLoginForm -> submit)
 });
 </script>
