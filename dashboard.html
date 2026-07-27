@@ -116,6 +116,32 @@ body{
   border-color:var(--azul-500);
   box-shadow:0 0 0 3px var(--azul-100);
 }
+.login-field-password-wrap{
+  position:relative;
+}
+.login-field-password-wrap input{
+  padding-right:42px;
+}
+.btn-toggle-senha{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:var(--cinza-400);
+  padding:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:color .15s ease;
+}
+.btn-toggle-senha:hover{color:var(--cinza-600);}
+.btn-toggle-senha svg{width:18px;height:18px;}
+.btn-toggle-senha .icon-eye-off{display:none;}
+.btn-toggle-senha.showing .icon-eye{display:none;}
+.btn-toggle-senha.showing .icon-eye-off{display:block;}
 .login-error{
   display:none;
   background:#fdecec;
@@ -743,7 +769,13 @@ tbody tr.selected{background:var(--azul-100);box-shadow:inset 3px 0 0 var(--azul
         </div>
         <div class="login-field">
           <label for="loginSenha">Senha</label>
-          <input type="password" id="loginSenha" placeholder="Sua senha" autocomplete="current-password" required>
+          <div class="login-field-password-wrap">
+            <input type="password" id="loginSenha" placeholder="Sua senha" autocomplete="current-password" required>
+            <button type="button" class="btn-toggle-senha" id="btnToggleSenha" aria-label="Mostrar senha">
+              <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.6 18.6 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
         </div>
         <button type="submit" class="btn-login" id="btnLoginSubmit">
           <span class="spinner-small"></span>
@@ -1035,6 +1067,15 @@ function setupLoginForm(){
   });
 
   document.getElementById("btnLogout").addEventListener("click", encerrarSessao);
+
+  document.getElementById("btnToggleSenha").addEventListener("click", () => {
+    const input = document.getElementById("loginSenha");
+    const btn = document.getElementById("btnToggleSenha");
+    const mostrando = input.type === "text";
+    input.type = mostrando ? "password" : "text";
+    btn.classList.toggle("showing", !mostrando);
+    btn.setAttribute("aria-label", mostrando ? "Mostrar senha" : "Ocultar senha");
+  });
 }
 
 /* -------------------------------------------------------------------------
